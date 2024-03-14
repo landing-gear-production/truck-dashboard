@@ -5,6 +5,6 @@ void setup() {
 }
 
 void loop() {
-    Serial.println("Hello World");
+    Serial.println("Hello Github");
     delay(1000);
 }
