@@ -101,7 +101,7 @@ void loadSettings()
     SysSettings.txToggle = true;
     SysSettings.rxToggle = true;
     SysSettings.lawicelAutoPoll = false;
-    SysSettings.lawicelMode = false;
+    SysSettings.lawicelMode = true;
     SysSettings.lawicellExtendedMode = false;
     SysSettings.lawicelTimestamping = false;
     SysSettings.numBuses = 1; // Currently we support CAN0
@@ -184,7 +184,7 @@ void setup()
             }
         }
     */
-    /*else*/ wifiManager.setup();
+    // /*else*/ wifiManager.setup();
 
     // heap_caps_print_heap_info(MALLOC_CAP_8BIT);
 
@@ -200,7 +200,7 @@ void setup()
     SysSettings.lawicelTimestamping = false;
     SysSettings.lawicelPollCounter = 0;
 
-    elmEmulator.setup();
+    // elmEmulator.setup();
 
     Serial.print("Free heap after setup: ");
     Serial.println(esp_get_free_heap_size());
@@ -237,7 +237,7 @@ fastest and safest with limited function calls
 */
 void loop()
 {
-    // uint32_t temp32;
+    uint32_t temp32;
     bool isConnected = false;
     int serialCnt;
     uint8_t in_byte;
@@ -246,17 +246,16 @@ void loop()
 
     if (SysSettings.lawicelPollCounter > 0)
         SysSettings.lawicelPollCounter--;
-    //}
 
     canManager.loop();
-    /*if (!settings.enableBT)*/ wifiManager.loop();
+    // /*if (!settings.enableBT)*/ wifiManager.loop();
 
-    size_t wifiLength = wifiGVRET.numAvailableBytes();
+    // size_t wifiLength = wifiGVRET.numAvailableBytes();
     size_t serialLength = serialGVRET.numAvailableBytes();
-    size_t maxLength = (wifiLength > serialLength) ? wifiLength : serialLength;
+    size_t maxLength = serialLength; //(wifiLength > serialLength) ? wifiLength : serialLength;
 
     // If the max time has passed or the buffer is almost filled then send buffered data out
-    if ((micros() - lastFlushMicros > SER_BUFF_FLUSH_INTERVAL) || (maxLength > (WIFI_BUFF_SIZE - 40)))
+    if ((micros() - lastFlushMicros > SER_BUFF_FLUSH_INTERVAL)) // || (maxLength > (WIFI_BUFF_SIZE - 40)))
     {
         lastFlushMicros = micros();
         if (serialLength > 0)
@@ -264,10 +263,10 @@ void loop()
             Serial.write(serialGVRET.getBufferedBytes(), serialLength);
             serialGVRET.clearBufferedBytes();
         }
-        if (wifiLength > 0)
-        {
-            wifiManager.sendBufferedData();
-        }
+        // if (wifiLength > 0)
+        // {
+        //     wifiManager.sendBufferedData();
+        // }
     }
 
     serialCnt = 0;
@@ -278,5 +277,5 @@ void loop()
         serialGVRET.processIncomingByte(in_byte);
     }
 
-    elmEmulator.loop();
+    // elmEmulator.loop();
 }

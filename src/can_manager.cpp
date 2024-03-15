@@ -23,16 +23,6 @@ void CANManager::setup()
             {
                 canBuses[i]->begin(settings.canSettings[i].nomSpeed, 255);
                 Serial.printf("Enabled CAN%u with speed %u\n", i, settings.canSettings[i].nomSpeed);
-                if ( (i == 0) && (settings.systemType == 2) )
-                {
-                  digitalWrite(SW_EN, HIGH); //MUST be HIGH to use CAN0 channel
-                  Serial.println("Enabling SWCAN Mode");
-                }
-                if ( (i == 1) && (settings.systemType == 2) )
-                {
-                  digitalWrite(SW_EN, LOW); //MUST be LOW to use CAN1 channel
-                  Serial.println("Enabling CAN1 will force CAN0 off.");
-                }
             }
             else
             {
