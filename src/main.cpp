@@ -49,7 +49,7 @@ void setupCAN() {
 
 void onData(twai_message_t *message) {
   // all J1939 frames are extended
-  if (!message->identifier)
+  if (!message->extd)
     return;
 
   J1939Header header = parseHeader(message->identifier);
