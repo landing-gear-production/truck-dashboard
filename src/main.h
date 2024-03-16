@@ -1,4 +1,6 @@
+#include <Arduino.h>
 #include "can_common.h"
+#include <esp32_can.h>
 #include "utils.h"
 #include "data.h"
 #include "j1939.h"

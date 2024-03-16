@@ -1,6 +1,3 @@
-#include <Arduino.h>
-#include <SPI.h>
-#include <esp32_can.h>
 #include <main.h>
 
 VehicleState state;
