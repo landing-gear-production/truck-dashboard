@@ -1,5 +1,6 @@
 #include "can_common.h"
 #include "utils.h"
+#include "data.h"
 #include "j1939.h"
 
 #define CAN_TX_PIN GPIO_NUM_19
