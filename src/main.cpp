@@ -7,10 +7,14 @@ void setup() {
   CAN0.setCANPins(CAN_RX_PIN, CAN_TX_PIN);
   CAN0.watchFor();
 
-  if (CAN0.begin(500000))
+  if (CAN0.begin(500000)) {
     Serial.println("CAN0 init ok");
-  else
+    neopixelWrite(LED_PIN, 0, 127, 0);
+  }
+  else {
     Serial.println("CAN0 init failed");
+    neopixelWrite(LED_PIN, 127, 0, 0);
+  }
 }
 
 void loop() {
@@ -19,6 +23,7 @@ void loop() {
 
   if (CAN0.read(frame)) {
     Serial.printf("[0x%08X]: %d %d %d %d %d %d %d %d\n", frame.id, frame.data.bytes[0], frame.data.bytes[1], frame.data.bytes[2], frame.data.bytes[3], frame.data.bytes[4], frame.data.bytes[5], frame.data.bytes[6], frame.data.bytes[7]);
+    neopixelWrite(LED_PIN, 0, 0, 127);
     onData(&frame);
 
     if (oldState != state)
