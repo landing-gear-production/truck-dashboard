@@ -22,6 +22,7 @@ void loop() {
 
   if (CAN0.read(frame)) {
     onData(&frame);
+
     if (oldState != state) {
       Serial.printf("Brake: %d, Accelerator: %d, Steering: %f, Current Gear: %d\n", state.brakePedalPosition, state.acceleratorPedalPosition, state.steeringWheelAngle, state.currentGear);
     }
@@ -33,17 +34,7 @@ void onData(CAN_FRAME *frame) {
   if (!frame->extended)
     return;
 
-  J1939Header header;
-  header.priority = frame->id & 0x1C000000;
-  header.pgn = frame->id & 0x00FFFF00;
-  header.pgn >>= 8;
-  header.src = static_cast<int>(frame->id);
-
-  if (isPeerToPeer(&header)) {
-    header.dest = static_cast<int>(header.pgn & 0xFF);
-    header.pgn &= 0x01FF00;
-  }
-
+  J1939Header header = parseHeader(frame->id);
   uint8_t gear, type, rawAngle;
   float radians;
 
@@ -75,6 +66,21 @@ void onData(CAN_FRAME *frame) {
       state.steeringWheelAngle = radians * 180 / PI;
       break;
   }
+}
+
+J1939Header parseHeader(uint32_t id) {
+  J1939Header header;
+  header.priority = id & 0x1C000000;
+  header.pgn = id & 0x00FFFF00;
+  header.pgn >>= 8;
+  header.src = static_cast<int>(id);
+
+  if (isPeerToPeer(&header)) {
+    header.dest = static_cast<int>(header.pgn & 0xFF);
+    header.pgn &= 0x01FF00;
+  }
+
+  return header;
 }
 
 bool isPeerToPeer(J1939Header *header) {

@@ -6,3 +6,4 @@
 
 bool isPeerToPeer(J1939Header *header);
 void onData(CAN_FRAME *frame);
+J1939Header parseHeader(uint32_t id);
