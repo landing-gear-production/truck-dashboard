@@ -1,9 +1,8 @@
-#include "data.h"
+#include "can_common.h"
 #include "utils.h"
+#include "j1939.h"
 
 #define CAN_TX_PIN GPIO_NUM_19
 #define CAN_RX_PIN GPIO_NUM_18
 
-bool isPeerToPeer(J1939Header *header);
 void onData(CAN_FRAME *frame);
-J1939Header parseHeader(uint32_t id);
