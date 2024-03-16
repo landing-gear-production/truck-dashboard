@@ -46,7 +46,7 @@ void onData(CAN_FRAME *frame) {
 
   uint8_t gear, type, rawAngle;
   float radians;
-  
+
   switch (header.pgn) {
     case 61441:
       // brake pedal position
@@ -67,13 +67,12 @@ void onData(CAN_FRAME *frame) {
       state.steeringWheelAngleSensorType = (SteeringWheelAngleSensorType) getBits(type, 0, 2);
 
       if (state.steeringWheelAngleSensorType == SteeringWheelAngleSensorType::NotAvailable)
-        Serial.println("Steering wheel angle sensor not available");
-      else {
-        // todo: check if LE or BE for raw angle
-        rawAngle = frame->data.bytes[1] << 8 | frame->data.bytes[0];
-        radians = ((float)rawAngle) * 31.374;
-        state.steeringWheelAngle = radians * 180 / PI;
-      }
+        return;
+  
+      // todo: check if LE or BE for raw angle
+      rawAngle = frame->data.bytes[1] << 8 | frame->data.bytes[0];
+      radians = ((float)rawAngle) * 31.374;
+      state.steeringWheelAngle = radians * 180 / PI;
       break;
   }
 }
