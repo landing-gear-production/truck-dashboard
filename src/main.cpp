@@ -18,11 +18,11 @@ void loop() {
   CAN_FRAME frame;
 
   if (CAN0.read(frame)) {
+    Serial.printf("[0x%08X]: %d %d %d %d %d %d %d %d\n", frame.id, frame.data.bytes[0], frame.data.bytes[1], frame.data.bytes[2], frame.data.bytes[3], frame.data.bytes[4], frame.data.bytes[5], frame.data.bytes[6], frame.data.bytes[7]);
     onData(&frame);
 
-    if (oldState != state) {
+    if (oldState != state)
       Serial.printf("Brake: %d, Accelerator: %d, Steering: %f, Current Gear: %d\n", state.brakePedalPosition, state.acceleratorPedalPosition, state.steeringWheelAngle, state.currentGear);
-    }
   }
 }
 
