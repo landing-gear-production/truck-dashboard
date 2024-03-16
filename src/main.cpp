@@ -4,66 +4,82 @@ VehicleState state;
 
 void setup() {
   Serial.begin(115200);
-  CAN0.setCANPins(CAN_RX_PIN, CAN_TX_PIN);
-  CAN0.watchFor();
-
-  if (CAN0.begin(500000)) {
-    Serial.println("CAN0 init ok");
-    neopixelWrite(LED_PIN, 0, 127, 0);
-  }
-  else {
-    Serial.println("CAN0 init failed");
-    neopixelWrite(LED_PIN, 127, 0, 0);
-  }
+  setupCAN();
 }
 
 void loop() {
   VehicleState oldState = state;
-  CAN_FRAME frame;
+  twai_message_t message;
 
-  if (CAN0.read(frame)) {
-    Serial.printf("[0x%08X]: %d %d %d %d %d %d %d %d\n", frame.id, frame.data.bytes[0], frame.data.bytes[1], frame.data.bytes[2], frame.data.bytes[3], frame.data.bytes[4], frame.data.bytes[5], frame.data.bytes[6], frame.data.bytes[7]);
+  if (twai_receive(&message, portMAX_DELAY) == ESP_OK) {
+    Serial.printf("[ID: 0x%08x, DLC: %d, Data: %02x %02x %02x %02x %02x %02x %02x %02x]\n", message.identifier, message.data_length_code, message.data[0], message.data[1], message.data[2], message.data[3], message.data[4], message.data[5], message.data[6], message.data[7]);
     neopixelWrite(LED_PIN, 0, 0, 127);
-    onData(&frame);
+    onData(&message);
 
     if (oldState != state)
       Serial.printf("Brake: %d, Accelerator: %d, Steering: %f, Current Gear: %d\n", state.brakePedalPosition, state.acceleratorPedalPosition, state.steeringWheelAngle, state.currentGear);
   }
 }
 
-void onData(CAN_FRAME *frame) {
+void setupCAN() {
+  twai_general_config_t g_config = TWAI_GENERAL_CONFIG_DEFAULT(GPIO_NUM_21, GPIO_NUM_22, TWAI_MODE_NORMAL);
+  twai_timing_config_t t_config = TWAI_TIMING_CONFIG_500KBITS();
+  twai_filter_config_t f_config = TWAI_FILTER_CONFIG_ACCEPT_ALL();
+
+  //Install TWAI driver
+  if (twai_driver_install(&g_config, &t_config, &f_config) == ESP_OK) {
+      printf("Driver installed\n");
+  } else {
+      printf("Failed to install driver\n");
+      neopixelWrite(LED_PIN, 127, 0, 0);
+      return;
+  }
+
+  //Start TWAI driver
+  if (twai_start() == ESP_OK) {
+      printf("Driver started\n");
+  } else {
+      printf("Failed to start driver\n");
+      neopixelWrite(LED_PIN, 127, 0, 0);
+      return;
+  }
+
+  neopixelWrite(LED_PIN, 0, 127, 0);
+}
+
+void onData(twai_message_t *message) {
   // all J1939 frames are extended
-  if (!frame->extended)
+  if (!message->identifier)
     return;
 
-  J1939Header header = parseHeader(frame->id);
+  J1939Header header = parseHeader(message->identifier);
   uint8_t gear, type, rawAngle;
   float radians;
 
   switch (header.pgn) {
     case 61441:
       // brake pedal position
-      state.brakePedalPosition = frame->data.bytes[1];
+      state.brakePedalPosition = message->data[1];
       break;
     case 61443:
       // accelerator pedal position
-      state.acceleratorPedalPosition = frame->data.bytes[1];
+      state.acceleratorPedalPosition = message->data[1];
       break;
     case 61445:
       // extract transmission information
-      gear = frame->data.bytes[0];
+      gear = message->data[0];
       state.currentGear = gear - 125;
       break;
     case 61449:
       // extract steering wheel angle sensor type
-      type = frame->data.bytes[2];
+      type = message->data[2];
       state.steeringWheelAngleSensorType = (SteeringWheelAngleSensorType) getBits(type, 0, 2);
 
       if (state.steeringWheelAngleSensorType == SteeringWheelAngleSensorType::NotAvailable)
         return;
   
       // todo: check if LE or BE for raw angle
-      rawAngle = frame->data.bytes[1] << 8 | frame->data.bytes[0];
+      rawAngle = message->data[1] << 8 | message->data[0];
       radians = ((float)rawAngle) * 31.374;
       state.steeringWheelAngle = radians * 180 / PI;
       break;
