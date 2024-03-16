@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include <j1939.h>
+#include "j1939.h"
 
 #if defined(ARDUINO)
 #include <Arduino.h>

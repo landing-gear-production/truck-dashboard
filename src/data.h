@@ -1,13 +1,6 @@
 #pragma once
 #include <stdint.h>
 
-struct J1939Header {
-  uint8_t priority;
-  uint32_t pgn;
-  uint8_t src;
-  uint8_t dest;
-};
-
 enum SteeringWheelAngleSensorType {
   Relative = 0,
   Absolute = 1,
