@@ -10,6 +10,11 @@ TEST(HeaderPGNTest, ShouldPass)
   ASSERT_EQ(header.pgn, 61444);
 }
 
+TEST(TransmissionTest, ShouldPass)
+{
+  
+}
+
 void setup()
 {
   Serial.begin(115200);
@@ -19,7 +24,6 @@ void setup()
 void loop()
 {
   if (RUN_ALL_TESTS());
-
   delay(1000);
 }
 

@@ -1,11 +1,16 @@
 #include <main.h>
 
 VehicleState state;
+uint8_t transData[8] = {0x20, 0x00, 0x93, 0x12, 0x1f, 0x00, 0xf0, 0x00};
+twai_message_t transMessage;
 
 void setup()
 {
   Serial.begin(115200);
   setupCAN();
+
+  transMessage.extd = 1;
+  transMessage.data_length_code = 8;
 }
 
 void loop()
@@ -23,19 +28,16 @@ void loop()
     //   Serial.printf("Engine Speed: %d\n", state.engineSpeed); // state.brakePedalPosition, state.acceleratorPedalPosition, state.steeringWheelAngle, state.currentGear, state.wheelBasedSpeed); //Brake: %d, Accelerator: %d, Steering: %f, Current Gear: %d,
   }
 
-  sendCANMessage();
+  sendCANMessage(0x0CF00400, transData);
 }
 
-uint8_t mes[8] = {0x20, 0x00, 0x93, 0x12, 0x1f, 0x00, 0xf0, 0x00};
-void sendCANMessage()
+void sendCANMessage(uint8_t id, uint8_t data[8])
 {
-  twai_message_t message;
-  message.identifier = 0x0CF00400;
-  message.extd = 1;
-  message.data_length_code = 8;
-  memcpy(message.data, mes, sizeof(mes));
-  twai_transmit(&message, pdMS_TO_TICKS(1000));
-  Serial.printf("[Sent | ID: 0x%08x, Extd: %d, DLC: %d, Data: %02x %02x %02x %02x %02x %02x %02x %02x]\n", message.identifier, message.extd, message.data_length_code, message.data[0], message.data[1], message.data[2], message.data[3], message.data[4], message.data[5], message.data[6], message.data[7]);
+  memcpy(transMessage.data, data, sizeof(data));
+  twai_transmit(&transMessage, pdMS_TO_TICKS(1000));
+
+  // Debug Sent Data
+  //  Serial.printf("[Sent | ID: 0x%08x, Extd: %d, DLC: %d, Data: %02x %02x %02x %02x %02x %02x %02x %02x]\n", message.identifier, message.extd, message.data_length_code, message.data[0], message.data[1], message.data[2], message.data[3], message.data[4], message.data[5], message.data[6], message.data[7]);
 }
 
 void setupCAN()
