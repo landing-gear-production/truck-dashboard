@@ -10,3 +10,4 @@
 
 void onData(twai_message_t *message);
 void setupCAN();
+void sendCANMessage();

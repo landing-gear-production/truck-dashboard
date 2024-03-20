@@ -9,6 +9,8 @@ enum SteeringWheelAngleSensorType {
 };
 
 struct VehicleState {
+  uint16_t wheelBasedSpeed;
+  float engineSpeed;
   uint8_t brakePedalPosition;
   uint8_t acceleratorPedalPosition;
   int8_t currentGear;
@@ -20,7 +22,9 @@ struct VehicleState {
            acceleratorPedalPosition == other.acceleratorPedalPosition &&
            currentGear == other.currentGear &&
            steeringWheelAngleSensorType == other.steeringWheelAngleSensorType &&
-           steeringWheelAngle == other.steeringWheelAngle;
+           steeringWheelAngle == other.steeringWheelAngle &&
+           wheelBasedSpeed == other.wheelBasedSpeed &&
+           engineSpeed == other.engineSpeed;
   }
 
   bool operator!=(const VehicleState &other) const {
