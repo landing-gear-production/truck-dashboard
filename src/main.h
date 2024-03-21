@@ -8,5 +8,11 @@
 #define CAN_RX_PIN GPIO_NUM_18
 #define LED_PIN 8
 
+#define LOW(x) ((x) & 0xff)
+#define HIGH(x) ((x) >> 8)
+
+uint8_t wheelBased[] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+
+void interpretWheel(float speed);
 void onData(twai_message_t *message);
 void setupCAN();
