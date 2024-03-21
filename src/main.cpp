@@ -1,8 +1,6 @@
 #include <main.h>
 
 VehicleState state;
-uint8_t transData[8] = {0x20, 0x00, 0x93, 0x12, 0x1f, 0x00, 0xf0, 0x00};
-twai_message_t transMessage;
 
 void setup()
 {
@@ -20,7 +18,7 @@ void loop()
 
   if (twai_receive(&message, portMAX_DELAY) == ESP_OK)
   {
-    // Serial.printf("[ID: 0x%08x, DLC: %d, Data: %02x %02x %02x %02x %02x %02x %02x %02x]\n", message.identifier, message.data_length_code, message.data[0], message.data[1], message.data[2], message.data[3], message.data[4], message.data[5], message.data[6], message.data[7]);
+    Serial.printf("[ID: 0x%08x, DLC: %d, Data: %02x %02x %02x %02x %02x %02x %02x %02x]\n", message.identifier, message.data_length_code, message.data[0], message.data[1], message.data[2], message.data[3], message.data[4], message.data[5], message.data[6], message.data[7]);
     neopixelWrite(LED_PIN, 0, 0, 127);
     onData(&message);
 
@@ -31,7 +29,7 @@ void loop()
   sendCANMessage(0x0CF00400, transData);
 }
 
-void sendCANMessage(uint8_t id, uint8_t data[8])
+void sendCANMessage(uint8_t id, uint8_t data[])
 {
   memcpy(transMessage.data, data, sizeof(data));
   twai_transmit(&transMessage, pdMS_TO_TICKS(1000));

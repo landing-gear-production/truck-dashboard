@@ -8,9 +8,9 @@
 #define CAN_RX_PIN GPIO_NUM_18
 #define LED_PIN 8
 
-extern uint8_t transData;
-extern twai_message_t transMessage;
+uint8_t transData[] = {0x20, 0x00, 0x93, 0x12, 0x1f, 0x00, 0xf0, 0x00};
+twai_message_t transMessage;
 
 void onData(twai_message_t *message);
-void setupCAN(uint8_t id, uint8_t data[8]);
-void sendCANMessage();
+void setupCAN();
+void sendCANMessage(uint8_t id, uint8_t data[]);
