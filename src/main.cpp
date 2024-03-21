@@ -24,18 +24,28 @@ void loop()
   }
 }
 
-void interpretWheel(float fSpeed)
+void parseWheel(float fSpeed)
 {
+  float convertedSpeed = 1.60934 * fSpeed / 256;
   unsigned short *uSpeed;
-  uSpeed = (unsigned short *)(&fSpeed);
-  wheelBased[1] = LOW(*uSpeed);
-  wheelBased[0] = HIGH(*uSpeed);
+  uSpeed = (unsigned short *)(&convertedSpeed);
+  wheelBased[2] = LOW(*uSpeed);
+  wheelBased[1] = HIGH(*uSpeed);
+}
+
+void parseEngine(float rpm)
+{
+  float convertedRotations = 
 }
 
 void sendWheelSpeed()
 {
   twai_message_t message;
-  
+  message.identifier = 419361278;
+  message.data_length_code = 8;
+  message.extd = 1;
+  memcpy(message.data, wheelBased, sizeof(wheelBased));
+  twai_transmit(&message, pdMS_TO_TICKS(1000));
 }
 
 void setupCAN()

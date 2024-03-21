@@ -13,6 +13,7 @@
 
 uint8_t wheelBased[] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
 
-void interpretWheel(float speed);
+void parseWheel(float speed);
+void parseEngine(float rpm);
 void onData(twai_message_t *message);
 void setupCAN();
