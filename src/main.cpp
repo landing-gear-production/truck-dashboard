@@ -10,18 +10,10 @@ void setup()
 
 void loop()
 {
-  VehicleState oldState = state;
-  twai_message_t message;
-
-  if (twai_receive(&message, portMAX_DELAY) == ESP_OK)
-  {
-    Serial.printf("[ID: 0x%08x, DLC: %d, Data: %02x %02x %02x %02x %02x %02x %02x %02x]\n", message.identifier, message.data_length_code, message.data[0], message.data[1], message.data[2], message.data[3], message.data[4], message.data[5], message.data[6], message.data[7]);
-    neopixelWrite(LED_PIN, 0, 0, 127);
-    onData(&message);
-
-    if (oldState != state)
-      Serial.printf("Brake: %d, Accelerator: %d, Steering: %f, Current Gear: %d\n", state.brakePedalPosition, state.acceleratorPedalPosition, state.steeringWheelAngle, state.currentGear);
-  }
+  // parseWheel(125);
+  // parseEngine(125);
+  sendWheel();
+  sendEngine();
 }
 
 void parseWheel(float fSpeed)
@@ -35,10 +27,24 @@ void parseWheel(float fSpeed)
 
 void parseEngine(float rpm)
 {
-  float convertedRotations = 
+  float convertedRpm = rpm * 0.125;
+  unsigned short *uSpeed;
+  uSpeed = (unsigned short *)(&rpm);
+  engineBased[4] = LOW(*uSpeed);
+  engineBased[3] = HIGH(*uSpeed);
 }
 
-void sendWheelSpeed()
+void sendEngine()
+{
+  twai_message_t message;
+  message.identifier = 418383102;
+  message.data_length_code = 8;
+  message.extd = 1;
+  memcpy(message.data, engineBased, sizeof(engineBased));
+  twai_transmit(&message, pdMS_TO_TICKS(1000));
+}
+
+void sendWheel()
 {
   twai_message_t message;
   message.identifier = 419361278;
@@ -79,45 +85,4 @@ void setupCAN()
   }
 
   neopixelWrite(LED_PIN, 0, 127, 0);
-}
-
-void onData(twai_message_t *message)
-{
-  // all J1939 frames are extended
-  if (!message->extd)
-    return;
-
-  J1939Header header = parseHeader(message->identifier);
-  uint8_t gear, type, rawAngle;
-  float radians;
-
-  switch (header.pgn)
-  {
-  case 61441:
-    // brake pedal position
-    state.brakePedalPosition = message->data[1];
-    break;
-  case 61443:
-    // accelerator pedal position
-    state.acceleratorPedalPosition = message->data[1];
-    break;
-  case 61445:
-    // extract transmission information
-    gear = message->data[0];
-    state.currentGear = gear - 125;
-    break;
-  case 61449:
-    // extract steering wheel angle sensor type
-    type = message->data[2];
-    state.steeringWheelAngleSensorType = (SteeringWheelAngleSensorType)getBits(type, 0, 2);
-
-    if (state.steeringWheelAngleSensorType == SteeringWheelAngleSensorType::NotAvailable)
-      return;
-
-    // todo: check if LE or BE for raw angle
-    rawAngle = message->data[1] << 8 | message->data[0];
-    radians = ((float)rawAngle) * 31.374;
-    state.steeringWheelAngle = radians * 180 / PI;
-    break;
-  }
 }
