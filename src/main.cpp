@@ -11,6 +11,7 @@ void setup()
 void loop()
 {
   twai_message_t rpm = createRpm(125);
+  twai_transmit(&rpm, pdMS_TO_TICKS(1000));
   // twai_message_t speed = createSpeed(125);
 }
 
