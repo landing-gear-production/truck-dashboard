@@ -10,48 +10,8 @@ void setup()
 
 void loop()
 {
-  // parseWheel(125);
-  // parseEngine(125);
-  sendWheel();
-  sendEngine();
-}
-
-void parseWheel(float fSpeed)
-{
-  float convertedSpeed = 1.60934 * fSpeed / 256;
-  unsigned short *uSpeed;
-  uSpeed = (unsigned short *)(&convertedSpeed);
-  wheelBased[2] = LOW(*uSpeed);
-  wheelBased[1] = HIGH(*uSpeed);
-}
-
-void parseEngine(float rpm)
-{
-  float convertedRpm = rpm * 0.125;
-  unsigned short *uSpeed;
-  uSpeed = (unsigned short *)(&rpm);
-  engineBased[4] = LOW(*uSpeed);
-  engineBased[3] = HIGH(*uSpeed);
-}
-
-void sendEngine()
-{
-  twai_message_t message;
-  message.identifier = 418383102;
-  message.data_length_code = 8;
-  message.extd = 1;
-  memcpy(message.data, engineBased, sizeof(engineBased));
-  twai_transmit(&message, pdMS_TO_TICKS(1000));
-}
-
-void sendWheel()
-{
-  twai_message_t message;
-  message.identifier = 419361278;
-  message.data_length_code = 8;
-  message.extd = 1;
-  memcpy(message.data, wheelBased, sizeof(wheelBased));
-  twai_transmit(&message, pdMS_TO_TICKS(1000));
+  twai_message_t rpm = createRpm(125);
+  // twai_message_t speed = createSpeed(125);
 }
 
 void setupCAN()
