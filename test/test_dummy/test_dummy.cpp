@@ -41,6 +41,21 @@ TEST(ZeroEngineSpeed, ShouldPass)
   ASSERT_EQ(response.data[3], expected.data[3]);
 }
 
+TEST(NavigationSpeed, ShouldPass)
+{
+  float rpm = 125;
+  twai_message_t expected;
+  expected.identifier = 0x18FEE8FE;
+  expected.data_length_code = 8;
+  expected.extd = 1;
+  expected.data[3] = 0x03;
+  expected.data[2] = 0xe8;
+
+  auto response = createTacSpeed(rpm);
+  ASSERT_EQ(response.data[3], expected.data[3]);
+  ASSERT_EQ(response.data[2], expected.data[2]);
+}
+
 void setup()
 {
   Serial.begin(115200);

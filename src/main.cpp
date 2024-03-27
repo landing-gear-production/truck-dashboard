@@ -6,15 +6,65 @@ void setup()
 {
   Serial.begin(115200);
   setupCAN();
+
+  rpm = createRpm(2000);
+  wheelSpeed = createWheelSpeed(130);
 }
 
 void loop()
 {
-  twai_message_t rpm = createRpm(125);
-  if (twai_transmit(&rpm, pdMS_TO_TICKS(1000))) {
-    neopixelWrite(LED_PIN, 0, 127, 127);
-  }
-  // twai_message_t speed = createSpeed(125);
+  twai_message_t message;
+  if (twai_receive(&message, pdMS_TO_TICKS(1000)) == ESP_OK)
+  {
+    neopixelWrite(LED_PIN, 0, 0, 127);
+    J1939Header header = parseHeader(message.identifier);
+    // if (header.pgn == 65265) {
+    //   if (!speedMessages.count(message.identifier)) {
+    //     speedMessages[message.identifier] = header.pgn;
+        printf("%08x,", message.identifier);
+        for (auto i = 0; i < message.data_length_code; i++)
+          printf("%02x,", message.data[i]);
+        printf("\n");
+      // }
+    // }
+  } //else
+  // {
+  //   printf("no message\n");
+  // }
+
+  // now = millis();
+  // if (now - lastUpdate >= period)
+  // {
+  //   // printf("%d\n", now - lastUpdate);
+  //   rpm = createRpm(static_cast<float>(random(1000, 3000)));
+  //   wheelSpeed = createWheelSpeed(static_cast<float>(random(50, 85)));
+  //   lastUpdate = now;
+
+  //   twai_transmit(&wheelSpeed, pdMS_TO_TICKS(10));
+  // }
+
+  // twai_transmit(&rpm, pdMS_TO_TICKS(10));
+  // delay(5);
+
+  // if (twai_transmit(&rpm, pdMS_TO_TICKS(10)))
+  // {
+  //   neopixelWrite(LED_PIN, 0, 127, 127);
+  // }
+  // delay(5);
+
+  // if (twai_transmit(&rpm, pdMS_TO_TICKS(100)))
+  // {
+  //   neopixelWrite(LED_PIN, 0, 127, 127);
+  // }
+
+  // for (int i = 0; i < sizeof(speedIds)/sizeof(speedIds[0]); i++)
+  // {
+  // wheelSpeed.identifier = speedIds[i];
+  // if (twai_transmit(&wheelSpeed, pdMS_TO_TICKS(100)))
+  // {
+  //   neopixelWrite(LED_PIN, 127, 127, 0);
+  // }
+  // }
 }
 
 void setupCAN()
