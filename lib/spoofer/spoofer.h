@@ -1,7 +1,17 @@
 #include "driver/twai.h"
+#include <fstream>
+#include <vector>
+#include <sstream>
+#include <string>
+#include <cstring>
 
 #define LOW(x) ((x) & 0xff)
 #define HIGH(x) ((x) >> 8)
+
+struct initDatum {
+    uint32_t identifier;
+    uint8_t data[];
+};
 
 // twai_message_t createSpeed(float speed);
 twai_message_t createRpm(float rpm);

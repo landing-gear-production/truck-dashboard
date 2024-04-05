@@ -6,6 +6,7 @@
 #include "j1939.h"
 #include "spoofer.h"
 #include "driver/twai.h"
+#include <string>
 
 #define CAN_TX_PIN GPIO_NUM_19
 #define CAN_RX_PIN GPIO_NUM_18

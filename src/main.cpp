@@ -21,13 +21,13 @@ void loop()
     // if (header.pgn == 65265) {
     //   if (!speedMessages.count(message.identifier)) {
     //     speedMessages[message.identifier] = header.pgn;
-        printf("%08x,", message.identifier);
-        for (auto i = 0; i < message.data_length_code; i++)
-          printf("%02x,", message.data[i]);
-        printf("\n");
-      // }
+    printf("%08x,", message.identifier);
+    for (auto i = 0; i < message.data_length_code; i++)
+      printf("%02x,", message.data[i]);
+    printf("\n");
     // }
-  } //else
+    // }
+  } // else
   // {
   //   printf("no message\n");
   // }

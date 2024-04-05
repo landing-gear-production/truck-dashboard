@@ -1,5 +1,4 @@
 #include "spoofer.h"
-using std
 
 twai_message_t createRpm(float rpm)
 {
@@ -48,24 +47,3 @@ twai_message_t createWheelSpeed(float kmh)
 
 // void startUpMessages()
 // {
-  
-// }
-
-void parseCSV()
-{
-    std::ifstream  data("/logs/device-monitor-240325-163326.csv");
-    std::string line;
-    std::vector<std::vector<std::string> > parsedCsv;
-    while(std::getline(data,line))
-    {
-        std::stringstream lineStream(line);
-        std::string cell;
-        std::vector<std::string> parsedRow;
-        while(std::getline(lineStream,cell,','))
-        {
-            parsedRow.push_back(cell);
-        }
-
-        parsedCsv.push_back(parsedRow);
-    }
-};
