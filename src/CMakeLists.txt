@@ -1,0 +1,1 @@
+idf_component_register(SRCS "j1939.cpp" "main.cpp" INCLUDE_DIRS "." REQUIRES esp_timer)
