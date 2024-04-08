@@ -46,8 +46,8 @@ std::vector<std::string> split(std::string s, std::string delimiter) {
   return res;
 }
 
-uint16_t speed;
-uint16_t rpm;
+uint16_t speed, rpm;
+uint16_t scaledRpm, scaledSpeed;
 
 void setupCAN();
 void canTask(void *args);

@@ -8,18 +8,15 @@ unsigned long millis() {
   return (unsigned long) (esp_timer_get_time() / 1000ULL);
 }
 
-void setup() {
-  printf("Setup called\n");
-  /* Configure parameters of an UART driver,
-     * communication pins and install the driver */
+void setup() {  
   uart_config_t uart_config = {
-      .baud_rate = 115200,
-      .data_bits = UART_DATA_8_BITS,
-      .parity    = UART_PARITY_DISABLE,
-      .stop_bits = UART_STOP_BITS_1,
-      .flow_ctrl = UART_HW_FLOWCTRL_DISABLE,
-      .rx_flow_ctrl_thresh = 122,
-      .source_clk = UART_SCLK_DEFAULT,
+    .baud_rate = 115200,
+    .data_bits = UART_DATA_8_BITS,
+    .parity    = UART_PARITY_DISABLE,
+    .stop_bits = UART_STOP_BITS_1,
+    .flow_ctrl = UART_HW_FLOWCTRL_DISABLE,
+    .rx_flow_ctrl_thresh = 122,
+    .source_clk = UART_SCLK_DEFAULT,
   };
   int intr_alloc_flags = 0;
 
@@ -46,6 +43,8 @@ void loop() {
     if (parts.size() >= 2) {
       speed = static_cast<uint16_t>(std::atoi(parts[0].c_str()));
       rpm = static_cast<uint16_t>(std::atoi(parts[1].c_str()));
+      scaledRpm = rpm * 8;
+      scaledSpeed = speed * 256;
     }
   }
   delay(50);
@@ -92,8 +91,6 @@ void setupCAN() {
 void canTask(void* args) {
   setupCAN();
   STARTUP_TIME = millis();
-
-  uint16_t scaledRpm, scaledSpeed;
   unsigned long now = millis();
 
   for (;;) {
@@ -102,12 +99,7 @@ void canTask(void* args) {
 
     if (twai_receive_v2(can0, &message, 0) == ESP_OK) {
       receivingData = true;
-
-      twai_transmit_v2(can1, &message, 0);
       if (now - STARTUP_TIME >= MESSAGE_SKIP_TIME_AFTER_STARTUP){
-        scaledRpm = static_cast<uint16_t>(rpm) * 8;
-        scaledSpeed = static_cast<uint16_t>(speed) * 256;
-
         if (message.identifier == 0x0CF00400) {
           message.data[4] = HIGH(scaledRpm);
           message.data[3] = LOW(scaledRpm);
