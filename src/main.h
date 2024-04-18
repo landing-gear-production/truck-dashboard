@@ -11,6 +11,7 @@
 #include "j1939.h"
 
 #define LOG_LOCAL_LEVEL ESP_LOG_WARNING
+// #define PRINT_CAN_MESSAGES
 #include "esp_log.h"
 
 #define BUF_SIZE (1024)
@@ -18,8 +19,8 @@
 #define LOW(x) ((x) & 0xff)
 #define HIGH(x) ((x) >> 8)
 
-#define CAN0_TX GPIO_NUM_19
 #define CAN0_RX GPIO_NUM_18
+#define CAN0_TX GPIO_NUM_19
 #define CAN1_TX GPIO_NUM_20
 #define CAN1_RX GPIO_NUM_21
 

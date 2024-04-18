@@ -99,20 +99,29 @@ void canTask(void* args) {
 
     if (twai_receive_v2(can0, &message, 0) == ESP_OK) {
       receivingData = true;
-      if (now - STARTUP_TIME >= MESSAGE_SKIP_TIME_AFTER_STARTUP){
+
+#ifdef PRINT_CAN_MESSAGES
+    printf("[0x%08x] ", static_cast<unsigned int>(message.identifier));
+    for (int i = 0; i < message.data_length_code; i++) {
+      printf("%02x ", message.data[i]);
+    }
+    printf("\n");
+#endif 
+
+      if (now - STARTUP_TIME >= MESSAGE_SKIP_TIME_AFTER_STARTUP) {
         if (message.identifier == 0x0CF00400) {
           message.data[4] = HIGH(scaledRpm);
           message.data[3] = LOW(scaledRpm);
-        } else if (message.identifier == 0x18fef100) {
+        } 
+        else if (message.identifier == 0x18fef100) {
           message.data[2] = HIGH(scaledSpeed);
           message.data[1] = LOW(scaledSpeed);
         }
 
         twai_transmit_v2(can1, &message, 0);
       }
-      else {
+      else
         twai_transmit_v2(can1, &message, 0);
-      }
     }
     delay(1);
   }
