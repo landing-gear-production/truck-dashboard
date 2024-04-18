@@ -10,6 +10,7 @@
             "includePath": [
                 "C:/Users/Nishanth/projects/landing-gear/truck-bringup/include",
                 "C:/Users/Nishanth/projects/landing-gear/truck-bringup/src",
+                "C:/Users/Nishanth/projects/landing-gear/truck-bringup/lib/spoofer",
                 "C:/Users/Nishanth/.platformio/packages/framework-espidf/components/riscv/include",
                 "C:/Users/Nishanth/projects/landing-gear/truck-bringup/.pio/build/esp32-c6-devkitc-1/config",
                 "C:/Users/Nishanth/.platformio/packages/framework-espidf/components/newlib/platform_include",
@@ -148,6 +149,7 @@
                 "C:/Users/Nishanth/.platformio/packages/framework-espidf/components/nvs_sec_provider/include",
                 "C:/Users/Nishanth/.platformio/packages/framework-espidf/components/spiffs/include",
                 "C:/Users/Nishanth/.platformio/packages/framework-espidf/components/wifi_provisioning/include",
+                "C:/Users/Nishanth/projects/landing-gear/truck-bringup/lib/j1939",
                 ""
             ],
             "browse": {
@@ -155,6 +157,7 @@
                 "path": [
                     "C:/Users/Nishanth/projects/landing-gear/truck-bringup/include",
                     "C:/Users/Nishanth/projects/landing-gear/truck-bringup/src",
+                    "C:/Users/Nishanth/projects/landing-gear/truck-bringup/lib/spoofer",
                     "C:/Users/Nishanth/.platformio/packages/framework-espidf/components/riscv/include",
                     "C:/Users/Nishanth/projects/landing-gear/truck-bringup/.pio/build/esp32-c6-devkitc-1/config",
                     "C:/Users/Nishanth/.platformio/packages/framework-espidf/components/newlib/platform_include",
@@ -293,6 +296,7 @@
                     "C:/Users/Nishanth/.platformio/packages/framework-espidf/components/nvs_sec_provider/include",
                     "C:/Users/Nishanth/.platformio/packages/framework-espidf/components/spiffs/include",
                     "C:/Users/Nishanth/.platformio/packages/framework-espidf/components/wifi_provisioning/include",
+                    "C:/Users/Nishanth/projects/landing-gear/truck-bringup/lib/j1939",
                     ""
                 ]
             },
